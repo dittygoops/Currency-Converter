@@ -20,6 +20,7 @@ public class Currency extends GeneralCurrency {
         amount /= startCurrency.getConversionToUSD();
         amount *= endCurrency.getConversionToUSD();
         Currency currency = new Currency(endCurrency.getName(), endCurrency.getConversionToUSD(), amount);
+        System.out.println(currency);
         return currency;
     }
 
