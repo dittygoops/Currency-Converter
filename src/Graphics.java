@@ -31,6 +31,21 @@ public class Graphics {
         frame.setDefaultCloseOperation(3);
         mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, 1));
+
+        createStartCurrencyButtons();
+
+        createTextField();
+
+        createEndCurrencyButtons();
+
+        createConvertButton();
+
+        frame.getContentPane().add(mainPanel);
+        frame.setSize(1200, 600);
+        frame.setVisible(true);
+    }
+
+    private static void createStartCurrencyButtons() {
         startingCurrencyButtonsPanel = new JPanel();
         currencies = Currency.getCurrencyList();
         startingCurrencyButtons = new ButtonGroup();
@@ -42,10 +57,18 @@ public class Graphics {
             startingCurrencyButtons.add(toggleButton);
         }
 
+        mainPanel.add(startingCurrencyButtonsPanel);
+    }
+
+    private static void createTextField() {
         textFieldPanel = new JPanel();
         amountField = createNumericInputField();
         textFieldPanel.add(amountField);
 
+        mainPanel.add(textFieldPanel);
+    }
+
+    private static void createEndCurrencyButtons() {
         endingCurrencyButtonsPanel = new JPanel();
         endingCurrencyButtons = new ButtonGroup();
 
@@ -56,21 +79,17 @@ public class Graphics {
             endingCurrencyButtons.add(toggleButton);
         }
 
+        mainPanel.add(endingCurrencyButtonsPanel);
+    }
+
+    private static void createConvertButton() {
         convertButtonPanel = new JPanel();
         convertButton = new JButton("Convert!");
         convertButton.addActionListener((e) -> {
             convertButton();
         });
         convertButtonPanel.add(convertButton);
-
-        mainPanel.add(startingCurrencyButtonsPanel);
-        mainPanel.add(textFieldPanel);
-        mainPanel.add(endingCurrencyButtonsPanel);
         mainPanel.add(convertButtonPanel);
-
-        frame.getContentPane().add(mainPanel);
-        frame.setSize(1200, 600);
-        frame.setVisible(true);
     }
 
     public static JTextField createNumericInputField() {
