@@ -12,6 +12,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 
 public class Graphics {
+    // all variables are in the class itself so they can be used by any of the methods below
     private static JFrame frame;
     private static JPanel mainPanel;
     private static JPanel startingCurrencyButtonsPanel;
@@ -51,6 +52,7 @@ public class Graphics {
         currencies = Currency.getCurrencyList();
         startingCurrencyButtons = new ButtonGroup();
 
+        // for each currency, make a toggle button and add to the button group
         for (GeneralCurrency currency : currencies) {
             JToggleButton toggleButton = new JToggleButton(currency.getName());
             toggleButton.putClientProperty("GeneralCurrency Object", currency);
@@ -58,6 +60,7 @@ public class Graphics {
             startingCurrencyButtons.add(toggleButton);
         }
 
+        // add the startingCurrencyButtonsPanel to the mainPanel and make it left-justified
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -71,6 +74,7 @@ public class Graphics {
         textFieldPanel.setBorder(BorderFactory.createTitledBorder("Amount"));
         textFieldPanel.add(amountField);
 
+        // add the textFieldPanel to the mainPanel and make it left-justified
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -84,6 +88,7 @@ public class Graphics {
         endingCurrencyButtonsPanel.setLayout(new GridLayout(0, 3));
         endingCurrencyButtons = new ButtonGroup();
 
+        // for each currency, make a toggle button and add to the button group
         for (GeneralCurrency currency : currencies) {
             JToggleButton toggleButton = new JToggleButton(currency.getName());
             toggleButton.putClientProperty("GeneralCurrency Object", currency);
@@ -91,6 +96,7 @@ public class Graphics {
             endingCurrencyButtons.add(toggleButton);
         }
 
+        // add the endingCurrencyButtonsPanel to the mainPanel and make it left-justified
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -100,21 +106,26 @@ public class Graphics {
 
     private static void createConvertButton() {
         convertButtonPanel = new JPanel();
+        // convertButtonPanel will also contain the conversion result to the right of it
         convertButtonPanel.setLayout(new BoxLayout(convertButtonPanel, BoxLayout.X_AXIS));
 
+        // when convertButton is clicked, call convertButton()
         convertButton = new JButton("Convert!");
         convertButton.addActionListener((e) -> {
             convertButton();
         });
 
+        // Push convertButton and resultLabel as far apart from each other -> convertButton is left justified and resultLabel is right justified
         convertButtonPanel.add(convertButton);
-        convertButtonPanel.add(Box.createHorizontalGlue()); // Space to right-align label
+        convertButtonPanel.add(Box.createHorizontalGlue());
         resultLabel = new JLabel("");
         convertButtonPanel.add(resultLabel);
 
+        // Make the convertButtonPanel the same width as the above panels
         int preferredWidth = startingCurrencyButtonsPanel.getPreferredSize().width;
         convertButtonPanel.setPreferredSize(new Dimension(preferredWidth, convertButton.getPreferredSize().height));
 
+        // add the convertButtonPanel to the mainPanel and make it left-justified
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 3;
@@ -122,35 +133,24 @@ public class Graphics {
         mainPanel.add(convertButtonPanel, gbc);
     }
 
+    // Create a document filter to allow only digits and a single decimal point
     private static JTextField createNumericInputField() {
-        JTextField textField = new JTextField(10); // Set preferred width
+        JTextField textField = new JTextField(10);
 
-        // Create a document filter to allow only digits and a single decimal point
         ((AbstractDocument) textField.getDocument()).setDocumentFilter(new DocumentFilter() {
-            @Override
             public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
                     throws BadLocationException {
                 String currentText = fb.getDocument().getText(0, fb.getDocument().getLength());
                 currentText = currentText.substring(0, offset) + text + currentText.substring(offset + length);
 
+                // if the given input is valid, replace the text in the amountField with the correct input
                 if (isValidNumericInput(currentText)) {
                     super.replace(fb, offset, length, text, attrs);
                 }
             }
 
-            @Override
-            public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
-                    throws BadLocationException {
-                String currentText = fb.getDocument().getText(0, fb.getDocument().getLength());
-                currentText = currentText.substring(0, offset) + string + currentText.substring(offset);
-
-                if (isValidNumericInput(currentText)) {
-                    super.insertString(fb, offset, string, attr);
-                }
-            }
-
-            // Validate the input for digits and a single decimal point
             private boolean isValidNumericInput(String input) {
+                // if input is any number of digits, one decimal point, and any number of digits, return true
                 return input.matches("\\d*\\.?\\d*");
             }
         });
@@ -160,23 +160,25 @@ public class Graphics {
 
     private static void convertButton() {
         JToggleButton selectedStartButton = getSelectedToggleButton(startingCurrencyButtons);
+
+        // if no starting currency is selected, return out of the function
         if (selectedStartButton == null) {
-            System.out.println("No Starting Currency selected!");
             return;
         }
         GeneralCurrency startGeneralCurrency = (GeneralCurrency) selectedStartButton.getClientProperty("GeneralCurrency Object");
 
+        // if no amount is specified, return out of the function
         String textInput = amountField.getText();
         if (textInput.isEmpty()) {
-            textInput = "0";
+            return;
         }
         double amount = Double.parseDouble(textInput);
 
         Currency startCurrency = new Currency(startGeneralCurrency.getName(), startGeneralCurrency.getConversionToUSD(), amount);
 
+        // if no end currency is selected, return out of the function
         JToggleButton selectedEndButton = getSelectedToggleButton(endingCurrencyButtons);
         if (selectedEndButton == null) {
-            System.out.println("No End Currency selected!");
             return;
         }
         GeneralCurrency endCurrency = (GeneralCurrency) selectedEndButton.getClientProperty("GeneralCurrency Object");
@@ -186,6 +188,7 @@ public class Graphics {
     }
 
     private static JToggleButton getSelectedToggleButton(ButtonGroup buttonGroup) {
+        // go through the button group to find and return the selected button
         Enumeration<AbstractButton> buttons = buttonGroup.getElements();
         while (buttons.hasMoreElements()) {
             JToggleButton button = (JToggleButton) buttons.nextElement();
@@ -193,13 +196,14 @@ public class Graphics {
                 return button;
             }
         }
-        return null; // No button selected
+        return null;
     }
 
     private static void displayResult(GeneralCurrency startCurrency, double amount, Currency resultCurrency) {
         String str = String.format("%.2f", amount) + " in " + startCurrency.getName() + " is " + resultCurrency.toString();
         resultLabel.setText(str);
 
+        // after changing the result label, repaint the entire application to reflect changes
         mainPanel.revalidate();
         mainPanel.repaint();
     }

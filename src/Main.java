@@ -4,10 +4,8 @@
 //
 
 public class Main {
-    public Main() {
-    }
-
     public static void main(String[] args) {
+        // Create page for user to interact with the application
         Graphics.createPage();
     }
 }

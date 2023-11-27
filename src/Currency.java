@@ -3,6 +3,7 @@
 // (powered by FernFlower decompiler)
 //
 
+// This class represents currencies with amounts
 public class Currency extends GeneralCurrency {
     private double amount;
 
@@ -15,12 +16,12 @@ public class Currency extends GeneralCurrency {
         return this.amount;
     }
 
+    // convert the start currency to USD and then to the end currency
     public static Currency convert(Currency startCurrency, GeneralCurrency endCurrency) {
         double amount = startCurrency.getAmount();
         amount /= startCurrency.getConversionToUSD();
         amount *= endCurrency.getConversionToUSD();
         Currency currency = new Currency(endCurrency.getName(), endCurrency.getConversionToUSD(), amount);
-        System.out.println(currency);
         return currency;
     }
 
