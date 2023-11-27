@@ -25,9 +25,6 @@ public class Graphics {
     private static JButton convertButton;
     private static JLabel resultLabel;
 
-    public Graphics() {
-    }
-
     public static void createPage() {
         frame = new JFrame("Currency Converter");
         frame.setDefaultCloseOperation(3);
@@ -125,7 +122,7 @@ public class Graphics {
         mainPanel.add(convertButtonPanel, gbc);
     }
 
-    public static JTextField createNumericInputField() {
+    private static JTextField createNumericInputField() {
         JTextField textField = new JTextField(10); // Set preferred width
 
         // Create a document filter to allow only digits and a single decimal point
@@ -188,7 +185,7 @@ public class Graphics {
         displayResult(startGeneralCurrency, amount, result);
     }
 
-    public static JToggleButton getSelectedToggleButton(ButtonGroup buttonGroup) {
+    private static JToggleButton getSelectedToggleButton(ButtonGroup buttonGroup) {
         Enumeration<AbstractButton> buttons = buttonGroup.getElements();
         while (buttons.hasMoreElements()) {
             JToggleButton button = (JToggleButton) buttons.nextElement();
@@ -199,7 +196,7 @@ public class Graphics {
         return null; // No button selected
     }
 
-    public static void displayResult(GeneralCurrency startCurrency, double amount, Currency resultCurrency) {
+    private static void displayResult(GeneralCurrency startCurrency, double amount, Currency resultCurrency) {
         String str = String.format("%.2f", amount) + " in " + startCurrency.getName() + " is " + resultCurrency.toString();
         resultLabel.setText(str);
 
