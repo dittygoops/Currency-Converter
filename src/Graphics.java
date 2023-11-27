@@ -163,6 +163,7 @@ public class Graphics {
 
         // if no starting currency is selected, return out of the function
         if (selectedStartButton == null) {
+            resultLabel.setText("No starting currency selected!");
             return;
         }
         GeneralCurrency startGeneralCurrency = (GeneralCurrency) selectedStartButton.getClientProperty("GeneralCurrency Object");
@@ -170,6 +171,7 @@ public class Graphics {
         // if no amount is specified, return out of the function
         String textInput = amountField.getText();
         if (textInput.isEmpty()) {
+            resultLabel.setText("No amount specified!");
             return;
         }
         double amount = Double.parseDouble(textInput);
@@ -179,6 +181,7 @@ public class Graphics {
         // if no end currency is selected, return out of the function
         JToggleButton selectedEndButton = getSelectedToggleButton(endingCurrencyButtons);
         if (selectedEndButton == null) {
+            resultLabel.setText("No end currency selected!");
             return;
         }
         GeneralCurrency endCurrency = (GeneralCurrency) selectedEndButton.getClientProperty("GeneralCurrency Object");
@@ -202,9 +205,5 @@ public class Graphics {
     private static void displayResult(GeneralCurrency startCurrency, double amount, Currency resultCurrency) {
         String str = String.format("%.2f", amount) + " in " + startCurrency.getName() + " is " + resultCurrency.toString();
         resultLabel.setText(str);
-
-        // after changing the result label, repaint the entire application to reflect changes
-        mainPanel.revalidate();
-        mainPanel.repaint();
     }
 }
