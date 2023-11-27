@@ -3,6 +3,7 @@
 // (powered by FernFlower decompiler)
 //
 
+import java.awt.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.text.AbstractDocument;
@@ -22,6 +23,7 @@ public class Graphics {
     private static ButtonGroup endingCurrencyButtons;
     private static JPanel convertButtonPanel;
     private static JButton convertButton;
+    private static JLabel resultLabel;
 
     public Graphics() {
     }
@@ -30,7 +32,7 @@ public class Graphics {
         frame = new JFrame("Currency Converter");
         frame.setDefaultCloseOperation(3);
         mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, 1));
+        mainPanel.setLayout(new GridBagLayout());
 
         createStartCurrencyButtons();
 
@@ -41,12 +43,14 @@ public class Graphics {
         createConvertButton();
 
         frame.getContentPane().add(mainPanel);
-        frame.setSize(1200, 600);
+        frame.setSize(800, 500);
         frame.setVisible(true);
     }
 
     private static void createStartCurrencyButtons() {
         startingCurrencyButtonsPanel = new JPanel();
+        startingCurrencyButtonsPanel.setBorder(BorderFactory.createTitledBorder("Starting Currency"));
+        startingCurrencyButtonsPanel.setLayout(new GridLayout(0, 3));
         currencies = Currency.getCurrencyList();
         startingCurrencyButtons = new ButtonGroup();
 
@@ -57,19 +61,30 @@ public class Graphics {
             startingCurrencyButtons.add(toggleButton);
         }
 
-        mainPanel.add(startingCurrencyButtonsPanel);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        mainPanel.add(startingCurrencyButtonsPanel, gbc);
     }
 
     private static void createTextField() {
         textFieldPanel = new JPanel();
         amountField = createNumericInputField();
+        textFieldPanel.setBorder(BorderFactory.createTitledBorder("Amount"));
         textFieldPanel.add(amountField);
 
-        mainPanel.add(textFieldPanel);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        mainPanel.add(textFieldPanel, gbc);
     }
 
     private static void createEndCurrencyButtons() {
         endingCurrencyButtonsPanel = new JPanel();
+        endingCurrencyButtonsPanel.setBorder(BorderFactory.createTitledBorder("Ending Currency"));
+        endingCurrencyButtonsPanel.setLayout(new GridLayout(0, 3));
         endingCurrencyButtons = new ButtonGroup();
 
         for (GeneralCurrency currency : currencies) {
@@ -79,17 +94,35 @@ public class Graphics {
             endingCurrencyButtons.add(toggleButton);
         }
 
-        mainPanel.add(endingCurrencyButtonsPanel);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.WEST;
+        mainPanel.add(endingCurrencyButtonsPanel, gbc);
     }
 
     private static void createConvertButton() {
         convertButtonPanel = new JPanel();
+        convertButtonPanel.setLayout(new BoxLayout(convertButtonPanel, BoxLayout.X_AXIS));
+
         convertButton = new JButton("Convert!");
         convertButton.addActionListener((e) -> {
             convertButton();
         });
+
         convertButtonPanel.add(convertButton);
-        mainPanel.add(convertButtonPanel);
+        convertButtonPanel.add(Box.createHorizontalGlue()); // Space to right-align label
+        resultLabel = new JLabel("");
+        convertButtonPanel.add(resultLabel);
+
+        int preferredWidth = startingCurrencyButtonsPanel.getPreferredSize().width;
+        convertButtonPanel.setPreferredSize(new Dimension(preferredWidth, convertButton.getPreferredSize().height));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.anchor = GridBagConstraints.WEST;
+        mainPanel.add(convertButtonPanel, gbc);
     }
 
     public static JTextField createNumericInputField() {
@@ -152,7 +185,7 @@ public class Graphics {
         GeneralCurrency endCurrency = (GeneralCurrency) selectedEndButton.getClientProperty("GeneralCurrency Object");
 
         Currency result = Currency.convert(startCurrency, endCurrency);
-        displayResult(result);
+        displayResult(startGeneralCurrency, amount, result);
     }
 
     public static JToggleButton getSelectedToggleButton(ButtonGroup buttonGroup) {
@@ -166,7 +199,11 @@ public class Graphics {
         return null; // No button selected
     }
 
-    public static void displayResult(Currency resultCurrency) {
+    public static void displayResult(GeneralCurrency startCurrency, double amount, Currency resultCurrency) {
+        String str = String.format("%.2f", amount) + " in " + startCurrency.getName() + " is " + resultCurrency.toString();
+        resultLabel.setText(str);
 
+        mainPanel.revalidate();
+        mainPanel.repaint();
     }
 }

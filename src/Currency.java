@@ -25,7 +25,6 @@ public class Currency extends GeneralCurrency {
     }
 
     public String toString() {
-        double var10000 = this.amount;
-        return "" + var10000 + " in " + this.getName();
+        return String.format("%.2f", amount) + " in " + this.getName();
     }
 }
