@@ -170,7 +170,7 @@ public class Graphics {
 
         // if no amount is specified, return out of the function
         String textInput = amountField.getText();
-        if (textInput.isEmpty()) {
+        if (textInput.isEmpty() || textInput.equals(".")) {
             resultLabel.setText("No amount specified!");
             return;
         }
